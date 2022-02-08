@@ -49,4 +49,24 @@ class ProductController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+    /**
+     * @Route("/{id}/edit", name="edit")
+     */
+    public function edit(Product $product, Request $request, ManagerRegistry $managerRegistry): Response
+    {
+        $form = $this->createForm(ProductType::class, $product);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $product->setDateUpdate(new DateTime());
+            $managerRegistry->getManager()->flush();
+
+            return $this->redirectToRoute('product/index.html.twig');
+        }
+
+        return $this->render('product/edit.html.twig', [
+            'product' => $product,
+            'form'    => $form->createView(),
+        ]);
+    }
 }
